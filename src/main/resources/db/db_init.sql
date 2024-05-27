@@ -2,10 +2,10 @@
 DO
 $$
     BEGIN
-        IF NOT EXISTS (SELECT FROM pg_database WHERE datname = 'tasks_manager') THEN
+        IF NOT EXISTS (SELECT FROM pg_database WHERE datname = '<database_name>') THEN
             PERFORM dblink_exec(
-                    'dbname=postgres user=postgres password=V44b2500!!',
-                    'CREATE DATABASE tasks_manager'
+                    'dbname=<database_name> user=<username> password=<password>',
+                    'CREATE DATABASE <database_name>'
                     );
         END IF;
     END
@@ -20,14 +20,15 @@ CREATE SCHEMA IF NOT EXISTS tasks_manager_schema;
 SET search_path TO tasks_manager_schema;
 
 -- Create table
-CREATE TABLE IF NOT EXISTS item(
-   item_id BIGSERIAL NOT NULL,
-   item_name VARCHAR(256) NOT NULL,
-   item_description TEXT NULL,
-   item_is_active BOOLEAN NOT NULL DEFAULT true,
-   item_start_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-   item_end_at TIMESTAMPTZ NULL,
-   item_related_item_id BIGINT NULL DEFAULT NULL,
-   CONSTRAINT PK_item__item_id PRIMARY KEY (item_id),
-   CONSTRAINT FK_item_item__item_related_item_id FOREIGN KEY (item_related_item_id) REFERENCES item(item_id)
+CREATE TABLE IF NOT EXISTS item
+(
+    item_id              BIGSERIAL    NOT NULL,
+    item_name            VARCHAR(256) NOT NULL,
+    item_description     TEXT         NULL,
+    item_is_active       BOOLEAN      NOT NULL DEFAULT true,
+    item_start_at        TIMESTAMPTZ  NOT NULL DEFAULT now(),
+    item_end_at          TIMESTAMPTZ  NULL,
+    item_related_item_id BIGINT       NULL     DEFAULT NULL,
+    CONSTRAINT PK_item__item_id PRIMARY KEY (item_id),
+    CONSTRAINT FK_item_item__item_related_item_id FOREIGN KEY (item_related_item_id) REFERENCES item (item_id)
 );
