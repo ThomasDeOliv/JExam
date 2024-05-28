@@ -1,5 +1,6 @@
-package com.thomasdeoliv.itemsmanager.database.daos;
+package com.thomasdeoliv.itemsmanager.database.daos.base;
 
+import com.thomasdeoliv.itemsmanager.database.daos.models.ResponseDTO;
 import com.thomasdeoliv.itemsmanager.database.entities.IEntity;
 
 /**
@@ -13,19 +14,19 @@ public interface IBaseDAO<T extends IEntity> {
 	 *
 	 * @param entity the entity to save.
 	 */
-	void saveEntity(T entity);
+	ResponseDTO saveEntity(T entity);
 
 	/**
 	 * Updates an existing entity in the database.
 	 *
 	 * @param entity the entity to update.
 	 */
-	void updateEntity(T entity);
+	ResponseDTO updateEntity(T entity);
 
 	/**
 	 * Deletes an entity from the database by its ID.
 	 *
 	 * @param id the ID of the entity to delete.
 	 */
-	void deleteEntity(Long id);
+	ResponseDTO deleteEntity(Long id);
 }

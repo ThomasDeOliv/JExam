@@ -1,9 +1,10 @@
 package com.thomasdeoliv.itemsmanager.database.daos;
 
+import com.thomasdeoliv.itemsmanager.database.daos.base.IBaseDAO;
+import com.thomasdeoliv.itemsmanager.database.daos.models.ExtendedResponseDTO;
 import com.thomasdeoliv.itemsmanager.database.entities.implementations.Project;
 import org.jetbrains.annotations.Nullable;
 
-import java.sql.SQLException;
 import java.util.List;
 
 public interface IProjectDAO extends IBaseDAO<Project> {
@@ -12,7 +13,7 @@ public interface IProjectDAO extends IBaseDAO<Project> {
 	 *
 	 * @return a list of all projects.
 	 */
-	List<Project> getAllProjects() throws SQLException;
+	ExtendedResponseDTO<List<Project>> getAllProjects();
 
 	/**
 	 * Retrieves a project by its ID.
@@ -20,6 +21,5 @@ public interface IProjectDAO extends IBaseDAO<Project> {
 	 * @param id the ID of the project to retrieve.
 	 * @return the project with the specified ID, or {@code null} if no such entity exists.
 	 */
-	@Nullable
-	Project getProjectById(Long id);
+	ExtendedResponseDTO<@Nullable Project> getProjectById(Long id);
 }

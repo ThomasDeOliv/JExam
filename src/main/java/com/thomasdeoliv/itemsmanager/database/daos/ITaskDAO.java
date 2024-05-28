@@ -1,5 +1,7 @@
 package com.thomasdeoliv.itemsmanager.database.daos;
 
+import com.thomasdeoliv.itemsmanager.database.daos.base.IBaseDAO;
+import com.thomasdeoliv.itemsmanager.database.daos.models.ExtendedResponseDTO;
 import com.thomasdeoliv.itemsmanager.database.entities.implementations.Task;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,7 +15,7 @@ public interface ITaskDAO extends IBaseDAO<Task> {
 	 * @param projectId the ID of the related project.
 	 * @return a list of related tasks.
 	 */
-	List<Task> getAllProjects(Long projectId) throws SQLException;
+	ExtendedResponseDTO<List<Task>> getAllProjects(Long projectId) throws SQLException;
 
 	/**
 	 * Retrieves a task by its ID.
@@ -21,6 +23,5 @@ public interface ITaskDAO extends IBaseDAO<Task> {
 	 * @param id the ID of the task to retrieve.
 	 * @return the task with the specified ID, or {@code null} if no such entity exists.
 	 */
-	@Nullable
-	Task getTaskById(Long id);
+	ExtendedResponseDTO<@Nullable Task> getTaskById(Long id);
 }
