@@ -2,10 +2,10 @@
 DO
 $$
     BEGIN
-        IF NOT EXISTS (SELECT FROM pg_database WHERE datname = 'tasks_manager') THEN
+        IF NOT EXISTS (SELECT FROM pg_database WHERE datname = 'items_manager_db') THEN
             PERFORM dblink_exec(
                     'dbname=postgres user=postgres password=V44b2500!!',
-                    'CREATE DATABASE tasks_manager'
+                    'CREATE DATABASE items_manager_db'
                     );
         END IF;
     END
