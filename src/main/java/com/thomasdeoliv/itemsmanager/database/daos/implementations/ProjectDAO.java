@@ -2,8 +2,8 @@ package com.thomasdeoliv.itemsmanager.database.daos.implementations;
 
 import com.thomasdeoliv.itemsmanager.config.Configuration;
 import com.thomasdeoliv.itemsmanager.database.daos.IProjectDAO;
-import com.thomasdeoliv.itemsmanager.database.daos.models.ResponseDTO;
 import com.thomasdeoliv.itemsmanager.database.daos.models.ExtendedResponseDTO;
+import com.thomasdeoliv.itemsmanager.database.daos.models.ResponseDTO;
 import com.thomasdeoliv.itemsmanager.database.entities.implementations.Project;
 import org.jetbrains.annotations.Nullable;
 
@@ -219,11 +219,11 @@ public class ProjectDAO implements IProjectDAO {
 		try (Connection connection = DriverManager.getConnection(this.url, this.userName, this.userPassword)) {
 			// Query
 			String query = """
-				DELETE
-				FROM items_manager_schema.item
-				WHERE items_manager_schema.item.item_related_item_id IS NULL
-					AND items_manager_schema.item.item_id = ?
-				""";
+					DELETE
+					FROM items_manager_schema.item
+					WHERE items_manager_schema.item.item_related_item_id IS NULL
+						AND items_manager_schema.item.item_id = ?
+					""";
 			// Create a statement
 			try (PreparedStatement statement = connection.prepareStatement(query)) {
 				// Set parameters

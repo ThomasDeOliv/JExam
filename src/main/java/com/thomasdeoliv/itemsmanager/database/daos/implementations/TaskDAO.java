@@ -2,8 +2,8 @@ package com.thomasdeoliv.itemsmanager.database.daos.implementations;
 
 import com.thomasdeoliv.itemsmanager.config.Configuration;
 import com.thomasdeoliv.itemsmanager.database.daos.ITaskDAO;
-import com.thomasdeoliv.itemsmanager.database.daos.models.ResponseDTO;
 import com.thomasdeoliv.itemsmanager.database.daos.models.ExtendedResponseDTO;
+import com.thomasdeoliv.itemsmanager.database.daos.models.ResponseDTO;
 import com.thomasdeoliv.itemsmanager.database.entities.implementations.Task;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,11 +34,11 @@ public class TaskDAO implements ITaskDAO {
 		try (Connection connection = DriverManager.getConnection(this.url, this.userName, this.userPassword)) {
 			// Query
 			String query = """
-				SELECT *
-				FROM items_manager_schema.item
-				WHERE items_manager_schema.item.item_related_item_id IS NOT NULL
-					AND items_manager_schema.item.item_related_item_id = ?
-			""";
+						SELECT *
+						FROM items_manager_schema.item
+						WHERE items_manager_schema.item.item_related_item_id IS NOT NULL
+							AND items_manager_schema.item.item_related_item_id = ?
+					""";
 			// Create a statement
 			try (PreparedStatement statement = connection.prepareStatement(query)) {
 				// Define params for query
@@ -89,11 +89,11 @@ public class TaskDAO implements ITaskDAO {
 		try (Connection connection = DriverManager.getConnection(this.url, this.userName, this.userPassword)) {
 			// Query
 			String query = """
-				SELECT *
-				FROM items_manager_schema.item
-				WHERE items_manager_schema.item.item_related_item_id IS NOT NULL
-				  AND items_manager_schema.item.item_id = ?
-				""";
+					SELECT *
+					FROM items_manager_schema.item
+					WHERE items_manager_schema.item.item_related_item_id IS NOT NULL
+					  AND items_manager_schema.item.item_id = ?
+					""";
 			// Create a statement
 			try (PreparedStatement statement = connection.prepareStatement(query)) {
 				// Prepare query
@@ -230,11 +230,11 @@ public class TaskDAO implements ITaskDAO {
 		try (Connection connection = DriverManager.getConnection(this.url, this.userName, this.userPassword)) {
 			// Query
 			String query = """
-				DELETE
-				FROM items_manager_schema.item
-				WHERE items_manager_schema.item.item_related_item_id IS NOT NULL
-					AND items_manager_schema.item.item_id = ?
-				""";
+					DELETE
+					FROM items_manager_schema.item
+					WHERE items_manager_schema.item.item_related_item_id IS NOT NULL
+						AND items_manager_schema.item.item_id = ?
+					""";
 			// Create a statement
 			try (PreparedStatement statement = connection.prepareStatement(query)) {
 				// Set parameters
