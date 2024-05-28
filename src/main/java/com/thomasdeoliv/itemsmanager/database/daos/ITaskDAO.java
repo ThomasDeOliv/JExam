@@ -1,11 +1,9 @@
 package com.thomasdeoliv.itemsmanager.database.daos;
 
-import com.thomasdeoliv.itemsmanager.database.daos.base.IBaseDAO;
 import com.thomasdeoliv.itemsmanager.database.daos.models.ExtendedResponseDTO;
 import com.thomasdeoliv.itemsmanager.database.entities.implementations.Task;
 import org.jetbrains.annotations.Nullable;
 
-import java.sql.SQLException;
 import java.util.List;
 
 public interface ITaskDAO extends IBaseDAO<Task> {
@@ -15,7 +13,7 @@ public interface ITaskDAO extends IBaseDAO<Task> {
 	 * @param projectId the ID of the related project.
 	 * @return a list of related tasks.
 	 */
-	ExtendedResponseDTO<List<Task>> getAllProjects(Long projectId) throws SQLException;
+	ExtendedResponseDTO<List<Task>> getAllProjects(Long projectId);
 
 	/**
 	 * Retrieves a task by its ID.

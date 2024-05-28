@@ -1,6 +1,5 @@
 package com.thomasdeoliv.itemsmanager.database.daos;
 
-import com.thomasdeoliv.itemsmanager.database.daos.base.IBaseDAO;
 import com.thomasdeoliv.itemsmanager.database.daos.models.ExtendedResponseDTO;
 import com.thomasdeoliv.itemsmanager.database.entities.implementations.Project;
 import org.jetbrains.annotations.Nullable;

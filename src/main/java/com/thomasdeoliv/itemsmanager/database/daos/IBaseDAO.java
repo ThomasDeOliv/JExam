@@ -1,4 +1,4 @@
-package com.thomasdeoliv.itemsmanager.database.daos.base;
+package com.thomasdeoliv.itemsmanager.database.daos;
 
 import com.thomasdeoliv.itemsmanager.database.daos.models.ResponseDTO;
 import com.thomasdeoliv.itemsmanager.database.entities.IEntity;
@@ -9,6 +9,7 @@ import com.thomasdeoliv.itemsmanager.database.entities.IEntity;
  * @param <T> Class implementing the {@link IEntity} interface.
  */
 public interface IBaseDAO<T extends IEntity> {
+	
 	/**
 	 * Saves a new entity to the database.
 	 *
