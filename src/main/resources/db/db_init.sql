@@ -16,3 +16,9 @@ CREATE TABLE IF NOT EXISTS item
     CONSTRAINT PK_item__item_id PRIMARY KEY (item_id),
     CONSTRAINT FK_item_item__item_related_item_id FOREIGN KEY (item_related_item_id) REFERENCES item (item_id) ON DELETE CASCADE
 );
+
+-- Insert datas for testing
+INSERT INTO item(item_name, item_description)
+VALUES ('Création de site internet', 'Mise en place d''un site WordPress.'),
+       ('Test de fonctionnalités', 'Réalisation de tests unitaires.'),
+       ('Achat licence SQL Server', NULL);

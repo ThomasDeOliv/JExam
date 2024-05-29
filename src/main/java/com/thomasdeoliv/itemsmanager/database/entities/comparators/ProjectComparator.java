@@ -1,4 +1,4 @@
-package com.thomasdeoliv.itemsmanager.ui.sort;
+package com.thomasdeoliv.itemsmanager.database.entities.comparators;
 
 import com.thomasdeoliv.itemsmanager.database.entities.implementations.Project;
 

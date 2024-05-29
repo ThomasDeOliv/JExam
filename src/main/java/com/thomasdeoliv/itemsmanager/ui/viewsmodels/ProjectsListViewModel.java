@@ -2,9 +2,9 @@ package com.thomasdeoliv.itemsmanager.ui.viewsmodels;
 
 import com.thomasdeoliv.itemsmanager.Launcher;
 import com.thomasdeoliv.itemsmanager.database.daos.exceptions.QueryFailedException;
+import com.thomasdeoliv.itemsmanager.database.entities.comparators.ProjectComparator;
 import com.thomasdeoliv.itemsmanager.database.entities.implementations.Project;
 import com.thomasdeoliv.itemsmanager.ui.cells.ProjectListCell;
-import com.thomasdeoliv.itemsmanager.ui.sort.ProjectComparator;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
