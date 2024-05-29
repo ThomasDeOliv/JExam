@@ -2,7 +2,7 @@ package com.thomasdeoliv.itemsmanager.database.entities;
 
 import org.jetbrains.annotations.Nullable;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
 /**
  * Contract containing all getters and setters for an entity.
@@ -56,7 +56,7 @@ public interface IEntity {
 	 * @param description The provided entity description.
 	 */
 	void setDescription(String description);
-	
+
 	// OPENING DATE AND TIME ***************************************************
 
 	/**
@@ -64,14 +64,14 @@ public interface IEntity {
 	 *
 	 * @return The entity opening date and time.
 	 */
-	LocalDateTime getStartedAt();
+	Timestamp getStartedAt();
 
 	/**
 	 * Mark the current date and time as the starting time for the entity.
 	 *
 	 * @param startedAt The date and time when the entity started.
 	 */
-	void setStartedAt(LocalDateTime startedAt);
+	void setStartedAt(Timestamp startedAt);
 
 	// CLOSING DATE AND TIME ***************************************************
 
@@ -80,14 +80,14 @@ public interface IEntity {
 	 *
 	 * @return The entity closing date and time.
 	 */
-	LocalDateTime getEndedAt();
+	Timestamp getEndedAt();
 
 	/**
 	 * Mark the current date and time as the ending time for the entity.
 	 *
 	 * @param endedAt The date and time when the entity ended.
 	 */
-	void setEndedAt(LocalDateTime endedAt);
+	void setEndedAt(Timestamp endedAt);
 
 	// RELATED ITEM ID *********************************************************
 

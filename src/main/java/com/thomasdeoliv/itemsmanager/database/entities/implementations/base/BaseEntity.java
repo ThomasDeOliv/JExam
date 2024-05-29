@@ -4,7 +4,7 @@ import com.thomasdeoliv.itemsmanager.database.entities.IEntity;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
 /**
  * Represent an entity.
@@ -29,11 +29,11 @@ public abstract class BaseEntity implements IEntity, Serializable {
 	/**
 	 * The creation date and time of the entity.
 	 */
-	private LocalDateTime startedAt;
+	private Timestamp startedAt;
 	/**
 	 * The nullable closing date and time of the entity.
 	 */
-	private @Nullable LocalDateTime endedAt;
+	private @Nullable Timestamp endedAt;
 	/**
 	 * If exists, the related ID of the current item.
 	 */
@@ -77,22 +77,22 @@ public abstract class BaseEntity implements IEntity, Serializable {
 	}
 
 	@Override
-	public LocalDateTime getStartedAt() {
+	public Timestamp getStartedAt() {
 		return this.startedAt;
 	}
 
 	@Override
-	public void setStartedAt(LocalDateTime startedAt) {
+	public void setStartedAt(Timestamp startedAt) {
 		this.startedAt = startedAt;
 	}
 
 	@Override
-	public @Nullable LocalDateTime getEndedAt() {
+	public @Nullable Timestamp getEndedAt() {
 		return this.endedAt;
 	}
 
 	@Override
-	public void setEndedAt(@Nullable LocalDateTime endedAt) {
+	public void setEndedAt(@Nullable Timestamp endedAt) {
 		this.endedAt = endedAt;
 	}
 
