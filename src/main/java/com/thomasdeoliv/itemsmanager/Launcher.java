@@ -6,6 +6,7 @@ import com.thomasdeoliv.itemsmanager.database.daos.implementations.TaskDAO;
 import com.thomasdeoliv.itemsmanager.database.entities.implementations.Project;
 import com.thomasdeoliv.itemsmanager.database.entities.implementations.Task;
 import javafx.application.Application;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -34,6 +35,7 @@ public class Launcher extends Application {
 
 	public static Project SelectedProject = null;
 	public static Task SelectedTask = null;
+	public static SimpleBooleanProperty DisplayTasks = new SimpleBooleanProperty(false);
 
 	@Override
 	public void start(@Nullable Stage primaryStage) {
@@ -43,27 +45,20 @@ public class Launcher extends Application {
 			if (primaryStage == null) {
 				throw new RuntimeException();
 			}
-
 			// Define the main stage
 			Launcher.primaryStage = primaryStage;
-
 			// Define title
 			primaryStage.setTitle("Items manager");
-
 			// Search for layout fxml view
-			URL layoutURL = this.getClass().getResource("/views/container/layout.fxml");
-
+			URL layoutURL = this.getClass().getResource("/views/layouts/layout.fxml");
 			// Ensure layout exists
 			if (layoutURL == null) {
 				throw new FileNotFoundException("Cannot find layout file.");
 			}
-
 			// Load layout
 			Parent mainView = FXMLLoader.load(layoutURL);
-
 			// Define scene
 			primaryStage.setScene(new Scene(mainView));
-
 			// Show the main stage
 			primaryStage.show();
 		} catch (IOException e) {

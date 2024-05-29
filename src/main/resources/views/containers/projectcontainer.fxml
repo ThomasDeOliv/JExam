@@ -1,26 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.layout.*?>
-<GridPane
-        xmlns="http://javafx.com/javafx/21"
-        xmlns:fx="http://javafx.com/fxml/1">
-
+<GridPane xmlns="http://javafx.com/javafx/21"
+          xmlns:fx="http://javafx.com/fxml/1">
     <columnConstraints>
         <ColumnConstraints percentWidth="50"/>
         <ColumnConstraints percentWidth="50"/>
     </columnConstraints>
-
     <rowConstraints>
         <RowConstraints percentHeight="100"/>
     </rowConstraints>
-
-    <fx:include fx:id="projectsListView"
-                source="../projectsListView.fxml"
+    <fx:include source="../projectsListView.fxml"
                 GridPane.rowIndex="0"
                 GridPane.columnIndex="0"/>
-    
-    <fx:include fx:id="projectsDetailsView"
-                source="../projectsDetailsView.fxml"
+    <fx:include source="../selectedProjectDetailsView.fxml"
                 GridPane.rowIndex="0"
                 GridPane.columnIndex="1"/>
 </GridPane>
