@@ -2,8 +2,8 @@ package com.thomasdeoliv.itemsmanager.database.daos.implementations;
 
 import com.thomasdeoliv.itemsmanager.config.Configuration;
 import com.thomasdeoliv.itemsmanager.database.daos.IProjectDAO;
-import com.thomasdeoliv.itemsmanager.database.daos.models.ExtendedResponseDTO;
-import com.thomasdeoliv.itemsmanager.database.daos.models.ResponseDTO;
+import com.thomasdeoliv.itemsmanager.database.daos.exceptions.QueryFailedException;
+import com.thomasdeoliv.itemsmanager.database.daos.exceptions.QueryType;
 import com.thomasdeoliv.itemsmanager.database.entities.implementations.Project;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,7 +27,7 @@ public class ProjectDAO implements IProjectDAO {
 	}
 
 	@Override
-	public ExtendedResponseDTO<List<Project>> getAllProjects() {
+	public List<Project> getAllProjects() throws QueryFailedException {
 		// Instantiate a list of projects.
 		List<Project> projects = new ArrayList<>();
 		// Open a connection to the database.
@@ -38,7 +38,8 @@ public class ProjectDAO implements IProjectDAO {
 				ResultSet rs = statement.executeQuery("""
 						    SELECT *
 						    FROM items_manager_schema.item
-						    WHERE items_manager_schema.item.item_related_item_id IS NULL;
+						    WHERE items_manager_schema.item.item_related_item_id IS NULL
+							ORDER BY items_manager_schema.item.item_start_at DESC;
 						""");
 				// Loop on each provided results
 				while (rs.next()) {
@@ -52,7 +53,6 @@ public class ProjectDAO implements IProjectDAO {
 					project.setId(rs.getLong("item_id"));
 					project.setName(rs.getString("item_name"));
 					project.setDescription(rs.getString("item_description"));
-					project.setIsActive(rs.getBoolean("item_is_active"));
 					project.setStartedAt(rs.getTimestamp("item_start_at").toLocalDateTime());
 					project.setEndedAt(endAt != null ? endAt.toLocalDateTime() : null);
 
@@ -60,31 +60,30 @@ public class ProjectDAO implements IProjectDAO {
 					projects.add(project);
 				}
 				// Return statement
-				return new ExtendedResponseDTO<>(true, "", projects);
-			} catch (SQLException ex) {
-				// Clear list
-				projects.clear();
-				// Return statement
-				return new ExtendedResponseDTO<>(false, ex.getMessage(), projects);
+				return projects;
 			}
 		} catch (SQLException ex) {
-			// Clear list
-			projects.clear();
 			// Return statement
-			return new ExtendedResponseDTO<>(false, ex.getMessage(), projects);
+			throw new QueryFailedException(QueryType.SELECT, Project.class.getSimpleName(), ex);
 		}
 	}
 
 	@Override
-	public ExtendedResponseDTO<@Nullable Project> getProjectById(Long id) {
+	public @Nullable Project getProjectById(Long id) throws QueryFailedException {
 		// Open a connection to the database.
 		try (Connection connection = DriverManager.getConnection(this.url, this.userName, this.userPassword)) {
 			// Query
 			String query = """
-					SELECT *
+					SELECT
+						item.*,
+					    (SELECT COUNT(*)
+					     FROM items_manager_schema.item AS tasks
+					     WHERE tasks.item_related_item_id IS NOT NULL
+					  						AND tasks.item_id = item.item_id) AS related_tasks
 					FROM items_manager_schema.item
 					WHERE items_manager_schema.item.item_related_item_id IS NULL
 					  AND items_manager_schema.item.item_id = ?
+					ORDER BY items_manager_schema.item.item_start_at DESC;
 					""";
 			// Create a statement
 			try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -106,67 +105,55 @@ public class ProjectDAO implements IProjectDAO {
 					project.setId(rs.getLong("item_id"));
 					project.setName(rs.getString("item_name"));
 					project.setDescription(rs.getString("item_description"));
-					project.setIsActive(rs.getBoolean("item_is_active"));
 					project.setStartedAt(rs.getTimestamp("item_start_at").toLocalDateTime());
 					project.setEndedAt(endAt != null ? endAt.toLocalDateTime() : null);
+					project.setId(rs.getLong("related_tasks"));
 				}
 				// Return
-				return new ExtendedResponseDTO<>(true, "", project);
-			} catch (SQLException ex) {
-				// Return statement
-				return new ExtendedResponseDTO<>(false, ex.getMessage(), null);
+				return project;
 			}
 		} catch (SQLException ex) {
 			// Return statement
-			return new ExtendedResponseDTO<>(false, ex.getMessage(), null);
+			throw new QueryFailedException(QueryType.SELECT, Project.class.getSimpleName(), ex);
 		}
 	}
 
 	@Override
-	public ResponseDTO saveEntity(Project entity) {
+	public void saveEntity(Project entity) throws QueryFailedException {
 		// Validate datas
 		if (entity.getEndedAt() != null || entity.getRelatedItemId() != null) {
-			return new ResponseDTO(false, "Invalid datas provided.");
+			throw new IllegalArgumentException("Invalid datas provided.");
 		}
 		// Open a connection to the database.
 		try (Connection connection = DriverManager.getConnection(this.url, this.userName, this.userPassword)) {
 			// Query
 			String query = """
-					INSERT INTO items_manager_schema.item(item_name, item_description, item_is_active, item_start_at, item_end_at, item_related_item_id)
-					VALUES (?, ?, ?, ?, ?, ?);
+					INSERT INTO items_manager_schema.item(item_name, item_description)
+					VALUES (?, ?);
 					""";
 			// Create a statement
 			try (PreparedStatement statement = connection.prepareStatement(query)) {
 				// Set parameters
 				statement.setString(1, entity.getName());
 				statement.setString(2, entity.getDescription());
-				statement.setBoolean(3, entity.getIsActive());
-				statement.setTimestamp(4, Timestamp.valueOf(entity.getStartedAt()));
-				statement.setNull(5, Types.TIMESTAMP);
-				statement.setNull(6, Types.BIGINT);
 				// Execute query
 				ResultSet rs = statement.executeQuery();
 				// Ensure query success
 				if (!rs.next()) {
 					throw new SQLException("Cannot save this project.");
 				}
-				// Return statement
-				return new ResponseDTO(true, "");
-			} catch (SQLException ex) {
-				// Return statement
-				return new ResponseDTO(false, ex.getMessage());
 			}
 		} catch (SQLException ex) {
 			// Return statement
-			return new ResponseDTO(false, ex.getMessage());
+			throw new QueryFailedException(QueryType.INSERT, Project.class.getSimpleName(), ex);
 		}
 	}
 
 	@Override
-	public ResponseDTO updateEntity(Project entity) {
+	public void updateEntity(Project entity) throws QueryFailedException {
 		// Validate datas
 		if (entity.getRelatedItemId() != null) {
-			return new ResponseDTO(false, "Invalid datas provided.");
+			throw new IllegalArgumentException("Invalid datas provided.");
 		}
 		// Open a connection to the database.
 		try (Connection connection = DriverManager.getConnection(this.url, this.userName, this.userPassword)) {
@@ -176,7 +163,6 @@ public class ProjectDAO implements IProjectDAO {
 					SET
 						item_name = ?,
 						item_description = ?,
-						item_is_active = ?,
 						item_end_at = ?
 					WHERE items_manager_schema.item.item_related_item_id IS NULL
 						AND items_manager_schema.item.item_id = ?;
@@ -186,35 +172,29 @@ public class ProjectDAO implements IProjectDAO {
 				// Set parameters
 				statement.setString(1, entity.getName());
 				statement.setString(2, entity.getDescription());
-				statement.setBoolean(3, entity.getIsActive());
 				// Set conditionally parameters
 				if (entity.getEndedAt() != null) {
-					statement.setTimestamp(4, Timestamp.valueOf(entity.getEndedAt()));
+					statement.setTimestamp(3, Timestamp.valueOf(entity.getEndedAt()));
 				} else {
-					statement.setNull(4, Types.TIMESTAMP);
+					statement.setNull(3, Types.TIMESTAMP);
 				}
 				// Set parameters
-				statement.setLong(5, entity.getId());
+				statement.setLong(4, entity.getId());
 				// Execute query
 				ResultSet rs = statement.executeQuery();
 				// Ensure query success
 				if (!rs.next()) {
 					throw new SQLException("Cannot update this project.");
 				}
-				// Return statement
-				return new ResponseDTO(true, "");
-			} catch (SQLException ex) {
-				// Return statement
-				return new ResponseDTO(false, ex.getMessage());
 			}
 		} catch (SQLException ex) {
 			// Return statement
-			return new ResponseDTO(false, ex.getMessage());
+			throw new QueryFailedException(QueryType.UPDATE, Project.class.getSimpleName(), ex);
 		}
 	}
 
 	@Override
-	public ResponseDTO deleteEntity(Long id) {
+	public void deleteEntity(Long id) throws QueryFailedException {
 		// Open a connection to the database.
 		try (Connection connection = DriverManager.getConnection(this.url, this.userName, this.userPassword)) {
 			// Query
@@ -234,15 +214,10 @@ public class ProjectDAO implements IProjectDAO {
 				if (!rs.next()) {
 					throw new SQLException("Cannot delete this project.");
 				}
-				// Return statement
-				return new ResponseDTO(true, "");
-			} catch (SQLException ex) {
-				// Return statement
-				return new ResponseDTO(false, ex.getMessage());
 			}
 		} catch (SQLException ex) {
 			// Return statement
-			return new ResponseDTO(false, ex.getMessage());
+			throw new QueryFailedException(QueryType.DELETE, Project.class.getSimpleName(), ex);
 		}
 	}
 }

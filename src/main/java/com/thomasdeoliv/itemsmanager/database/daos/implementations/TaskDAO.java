@@ -2,8 +2,8 @@ package com.thomasdeoliv.itemsmanager.database.daos.implementations;
 
 import com.thomasdeoliv.itemsmanager.config.Configuration;
 import com.thomasdeoliv.itemsmanager.database.daos.ITaskDAO;
-import com.thomasdeoliv.itemsmanager.database.daos.models.ExtendedResponseDTO;
-import com.thomasdeoliv.itemsmanager.database.daos.models.ResponseDTO;
+import com.thomasdeoliv.itemsmanager.database.daos.exceptions.QueryFailedException;
+import com.thomasdeoliv.itemsmanager.database.daos.exceptions.QueryType;
 import com.thomasdeoliv.itemsmanager.database.entities.implementations.Task;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,17 +27,18 @@ public class TaskDAO implements ITaskDAO {
 	}
 
 	@Override
-	public ExtendedResponseDTO<List<Task>> getAllProjects(Long projectId) {
-		// Instantiate a list of projects.
+	public List<Task> getAllTasks(Long projectId) throws QueryFailedException {
+		// Instantiate a list
 		List<Task> tasks = new ArrayList<>();
 		// Open a connection to the database.
 		try (Connection connection = DriverManager.getConnection(this.url, this.userName, this.userPassword)) {
 			// Query
 			String query = """
-						SELECT *
-						FROM items_manager_schema.item
-						WHERE items_manager_schema.item.item_related_item_id IS NOT NULL
-							AND items_manager_schema.item.item_related_item_id = ?
+					SELECT *
+					FROM items_manager_schema.item
+					WHERE items_manager_schema.item.item_related_item_id IS NOT NULL
+						AND items_manager_schema.item.item_related_item_id = ?
+					ORDER BY items_manager_schema.item.item_start_at DESC;
 					""";
 			// Create a statement
 			try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -49,42 +50,29 @@ public class TaskDAO implements ITaskDAO {
 				while (rs.next()) {
 					// Instantiate a project object
 					Task task = new Task();
-
 					// Fetch endAt column value
 					@Nullable Timestamp endAt = rs.getTimestamp("item_end_at");
-
 					// Fill all fields
 					task.setId(rs.getLong("item_id"));
 					task.setName(rs.getString("item_name"));
 					task.setDescription(rs.getString("item_description"));
-					task.setIsActive(rs.getBoolean("item_is_active"));
 					task.setStartedAt(rs.getTimestamp("item_start_at").toLocalDateTime());
 					task.setEndedAt(endAt != null ? endAt.toLocalDateTime() : null);
 					task.setRelatedItemId(rs.getLong("item_related_item_id"));
-
 					// Add project to list
 					tasks.add(task);
 				}
-
 				// Return statement
-				return new ExtendedResponseDTO<>(true, "", tasks);
-
-			} catch (SQLException ex) {
-				// Clear list
-				tasks.clear();
-				// Return statement
-				return new ExtendedResponseDTO<>(false, ex.getMessage(), null);
+				return tasks;
 			}
 		} catch (SQLException ex) {
-			// Clear list
-			tasks.clear();
 			// Return statement
-			return new ExtendedResponseDTO<>(false, ex.getMessage(), null);
+			throw new QueryFailedException(QueryType.SELECT, Task.class.getSimpleName(), ex);
 		}
 	}
 
 	@Override
-	public ExtendedResponseDTO<@Nullable Task> getTaskById(Long id) {
+	public @Nullable Task getTaskById(Long id) throws QueryFailedException {
 		// Open a connection to the database.
 		try (Connection connection = DriverManager.getConnection(this.url, this.userName, this.userPassword)) {
 			// Query
@@ -93,6 +81,7 @@ public class TaskDAO implements ITaskDAO {
 					FROM items_manager_schema.item
 					WHERE items_manager_schema.item.item_related_item_id IS NOT NULL
 					  AND items_manager_schema.item.item_id = ?
+					ORDER BY items_manager_schema.item.item_start_at DESC;
 					""";
 			// Create a statement
 			try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -114,68 +103,56 @@ public class TaskDAO implements ITaskDAO {
 					task.setId(rs.getLong("item_id"));
 					task.setName(rs.getString("item_name"));
 					task.setDescription(rs.getString("item_description"));
-					task.setIsActive(rs.getBoolean("item_is_active"));
 					task.setStartedAt(rs.getTimestamp("item_start_at").toLocalDateTime());
 					task.setEndedAt(endAt != null ? endAt.toLocalDateTime() : null);
 					task.setRelatedItemId(rs.getLong("item_related_item_id"));
 				}
 				// Return
-				return new ExtendedResponseDTO<>(true, "", task);
-			} catch (SQLException ex) {
-				// Return statement
-				return new ExtendedResponseDTO<>(false, ex.getMessage(), null);
+				return task;
 			}
 		} catch (SQLException ex) {
 			// Return statement
-			return new ExtendedResponseDTO<>(false, ex.getMessage(), null);
+			throw new QueryFailedException(QueryType.SELECT, Task.class.getSimpleName(), ex);
 		}
 	}
 
 	@Override
-	public ResponseDTO saveEntity(Task entity) {
+	public void saveEntity(Task entity) throws QueryFailedException {
 		// Validate datas
 		if (entity.getEndedAt() != null || entity.getRelatedItemId() == null) {
-			return new ResponseDTO(false, "Invalid datas provided.");
+			throw new IllegalArgumentException("Invalid datas provided.");
 		}
 		// Open a connection to the database.
 		try (Connection connection = DriverManager.getConnection(this.url, this.userName, this.userPassword)) {
 			// Query
 			String query = """
-					INSERT INTO items_manager_schema.item(item_name, item_description, item_is_active, item_start_at, item_end_at, item_related_item_id)
-					VALUES (?, ?, ?, ?, ?, ?);
+					INSERT INTO items_manager_schema.item(item_name, item_description, item_related_item_id)
+					VALUES (?, ?, ?);
 					""";
 			// Create a statement
 			try (PreparedStatement statement = connection.prepareStatement(query)) {
 				// Set parameters
 				statement.setString(1, entity.getName());
 				statement.setString(2, entity.getDescription());
-				statement.setBoolean(3, entity.getIsActive());
-				statement.setTimestamp(4, Timestamp.valueOf(entity.getStartedAt()));
-				statement.setNull(5, Types.TIMESTAMP);
-				statement.setLong(6, entity.getRelatedItemId());
+				statement.setLong(3, entity.getRelatedItemId());
 				// Execute query
 				ResultSet rs = statement.executeQuery();
 				// Ensure query success
 				if (!rs.next()) {
 					throw new SQLException("Cannot save this task.");
 				}
-				// Return statement
-				return new ResponseDTO(true, "");
-			} catch (SQLException ex) {
-				// Return statement
-				return new ResponseDTO(false, ex.getMessage());
 			}
 		} catch (SQLException ex) {
 			// Return statement
-			return new ResponseDTO(false, ex.getMessage());
+			throw new QueryFailedException(QueryType.INSERT, Task.class.getSimpleName(), ex);
 		}
 	}
 
 	@Override
-	public ResponseDTO updateEntity(Task entity) {
+	public void updateEntity(Task entity) throws QueryFailedException {
 		// Validate datas
 		if (entity.getRelatedItemId() == null) {
-			return new ResponseDTO(false, "Invalid datas provided.");
+			throw new IllegalArgumentException("Invalid datas provided.");
 		}
 		// Open a connection to the database.
 		try (Connection connection = DriverManager.getConnection(this.url, this.userName, this.userPassword)) {
@@ -185,7 +162,6 @@ public class TaskDAO implements ITaskDAO {
 					SET
 						item_name = ?,
 						item_description = ?,
-						item_is_active = ?,
 						item_end_at = ?,
 						item_related_item_id = ?
 					WHERE items_manager_schema.item.item_related_item_id IS NOT NULL
@@ -196,36 +172,30 @@ public class TaskDAO implements ITaskDAO {
 				// Set parameters
 				statement.setString(1, entity.getName());
 				statement.setString(2, entity.getDescription());
-				statement.setBoolean(3, entity.getIsActive());
 				// Set conditionally parameters
 				if (entity.getEndedAt() != null) {
-					statement.setTimestamp(4, Timestamp.valueOf(entity.getEndedAt()));
+					statement.setTimestamp(3, Timestamp.valueOf(entity.getEndedAt()));
 				} else {
-					statement.setNull(4, Types.TIMESTAMP);
+					statement.setNull(3, Types.TIMESTAMP);
 				}
 				// Set parameters
-				statement.setLong(5, entity.getRelatedItemId());
-				statement.setLong(6, entity.getId());
+				statement.setLong(4, entity.getRelatedItemId());
+				statement.setLong(5, entity.getId());
 				// Execute query
 				ResultSet rs = statement.executeQuery();
 				// Ensure query success
 				if (!rs.next()) {
 					throw new SQLException("Cannot delete this task.");
 				}
-				// Return statement
-				return new ResponseDTO(true, "");
-			} catch (SQLException ex) {
-				// Return statement
-				return new ResponseDTO(false, ex.getMessage());
 			}
 		} catch (SQLException ex) {
 			// Return statement
-			return new ResponseDTO(false, ex.getMessage());
+			throw new QueryFailedException(QueryType.UPDATE, Task.class.getSimpleName(), ex);
 		}
 	}
 
 	@Override
-	public ResponseDTO deleteEntity(Long id) {
+	public void deleteEntity(Long id) throws QueryFailedException {
 		// Open a connection to the database.
 		try (Connection connection = DriverManager.getConnection(this.url, this.userName, this.userPassword)) {
 			// Query
@@ -245,15 +215,10 @@ public class TaskDAO implements ITaskDAO {
 				if (!rs.next()) {
 					throw new SQLException("Cannot delete this task.");
 				}
-				// Return statement
-				return new ResponseDTO(true, "");
-			} catch (SQLException ex) {
-				// Return statement
-				return new ResponseDTO(false, ex.getMessage());
 			}
 		} catch (SQLException ex) {
 			// Return statement
-			return new ResponseDTO(false, ex.getMessage());
+			throw new QueryFailedException(QueryType.DELETE, Task.class.getSimpleName(), ex);
 		}
 	}
 }

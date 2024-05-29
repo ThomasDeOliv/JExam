@@ -13,6 +13,11 @@ public class Project extends BaseEntity {
 	 * The list of related tasks.
 	 */
 	private final List<Task> tasks;
+	
+	/**
+	 * The number of related tasks.
+	 */
+	private int tasksCount;
 
 	/**
 	 * Constructor.
@@ -29,7 +34,23 @@ public class Project extends BaseEntity {
 	 *
 	 * @return The related tasks.
 	 */
-	public List<Task> GetTasks() {
+	public List<Task> getTasks() {
 		return tasks;
+	}
+
+	/**
+	 * Accessor for the count of related tasks.
+	 *
+	 * @return The number of related tasks.
+	 */
+	public int getTasksCount() {
+		return this.tasksCount;
+	}
+
+	/**
+	 * Set the number of tasks.
+	 */
+	public void setTasksCount(int tasksCount) {
+		this.tasksCount = tasksCount;
 	}
 }

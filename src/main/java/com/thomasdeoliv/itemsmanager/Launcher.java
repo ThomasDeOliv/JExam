@@ -1,114 +1,107 @@
 package com.thomasdeoliv.itemsmanager;
 
+import com.thomasdeoliv.itemsmanager.config.Configuration;
+import com.thomasdeoliv.itemsmanager.database.daos.implementations.ProjectDAO;
+import com.thomasdeoliv.itemsmanager.database.daos.implementations.TaskDAO;
+import com.thomasdeoliv.itemsmanager.database.entities.implementations.Project;
+import com.thomasdeoliv.itemsmanager.database.entities.implementations.Task;
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.layout.StackPane;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
+import org.jetbrains.annotations.Nullable;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.net.URL;
 
 /**
  * The class which contains the Main function.
  */
 public class Launcher extends Application {
 
-//	private static IProjectDAO projectDAO;
-//	private static ITaskDAO taskDAO;
-//
-//	/**
-//	 * Constructor
-//	 */
-//	public Launcher() {
-//
-//		// Call base constructor
-//		super();
-//
-//		// Safely initialize main window and dependencies
-//		try {
-//			// Set window parameters
-//			this.addWindowListener(new WindowAdapter() {
-//				public void windowClosing(WindowEvent e) {
-//					System.exit(0);
-//				}
-//			});
-//			this.setSize(1280, 720);
-//			this.setResizable(false);
-//			this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//			this.setLayout(new BorderLayout());
-//
-//			// Create panels
-//			ProjectRecords projectPanel = new ProjectRecords(projectDAO);
-//			TaskRecords taskPanel = new TaskRecords(taskDAO);
-//
-//			// Create a split pane with a horizontal split
-//			JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, projectPanel, taskPanel);
-//			splitPane.setDividerLocation(0.5); // Set the divider to the middle (50%)
-//
-//			// Add split pane to the frame
-//			this.add(splitPane, BorderLayout.CENTER);
-//
-//			// Load data into panels
-//			projectPanel.loadProjects();
-//
-//		} catch (Exception ex) {
-//			// Instance a model window to display errors
-//			ErrorDialog errorDialog = new ErrorDialog("Error", ex.getMessage());
-//			// Show the modal windows to the user
-//			errorDialog.setVisible(true);
-//		}
-//	}
-//
-//	/**
-//	 * The Main entry point of the application.
-//	 *
-//	 * @param args the command-line arguments passed to the application.
-//	 */
-//	public static void main(String[] args) {
-//		try {
-//			// Set dependencies
-//			Configuration configuration = new Configuration();
-//			projectDAO = new ProjectDAO(configuration);
-//			taskDAO = new TaskDAO(configuration);
-//
-//			// Create database if requested by the user
-//			if (args.length != 0 && args[0].equals("--init-db")) {
-//				// Deploy database
-//				Seeder seeder = new Seeder(configuration);
-//				seeder.EnsureDatabaseCreated();
-//				// Build schema and tables
-//				seeder.EnsureSchemaAndTablesCreated();
-//			}
-//
-//			// Display window asynchronously
-//			SwingUtilities.invokeLater(() -> {
-//				// Instantiate the main window
-//				JFrame frame = new Launcher();
-//				// Set visibility to true
-//				frame.setVisible(true);
-//			});
-//
-//		} catch (Exception ex) {
-//			// Instance a model window to display errors
-//			ErrorDialog errorDialog = new ErrorDialog("Error", ex.getMessage());
-//			// Show the modal windows to the user
-//			errorDialog.setVisible(true);
-//		}
-//	}
+	private static Stage primaryStage;
+
+	public static final Configuration configuration = new Configuration();
+	public static final ProjectDAO projectDAO = new ProjectDAO(Launcher.configuration);
+	public static final TaskDAO taskDAO = new TaskDAO(Launcher.configuration);
+
+	public static Project SelectedProject = null;
+	public static Task SelectedTask = null;
 
 	@Override
-	public void start(Stage primaryStage) {
-		primaryStage.setTitle("Hello JavaFX");
+	public void start(@Nullable Stage primaryStage) {
 
-		Button btn = new Button();
-		btn.setText("Say 'Hello World'");
-		btn.setOnAction(event -> System.out.println("Hello World!"));
+		try {
+			// Ensure the stage exists
+			if (primaryStage == null) {
+				throw new RuntimeException();
+			}
 
-		StackPane root = new StackPane();
-		root.getChildren().add(btn);
+			// Define the main stage
+			Launcher.primaryStage = primaryStage;
 
-		Scene scene = new Scene(root, 300, 250);
+			// Define title
+			primaryStage.setTitle("Items manager");
 
-		primaryStage.setScene(scene);
-		primaryStage.show();
+			// Search for layout fxml view
+			URL layoutURL = this.getClass().getResource("/views/container/layout.fxml");
+
+			// Ensure layout exists
+			if (layoutURL == null) {
+				throw new FileNotFoundException("Cannot find layout file.");
+			}
+
+			// Load layout
+			Parent mainView = FXMLLoader.load(layoutURL);
+
+			// Define scene
+			primaryStage.setScene(new Scene(mainView));
+
+			// Show the main stage
+			primaryStage.show();
+		} catch (IOException e) {
+
+			StringWriter stringWriter = new StringWriter();
+			PrintWriter printWriter = new PrintWriter(stringWriter);
+
+			// Print all causes of the exception
+			Throwable current = e;
+			while (current != null) {
+				current.printStackTrace(printWriter);
+				current = current.getCause();
+				if (current != null) {
+					printWriter.println("Caused by:");
+				}
+			}
+
+			String stackTrace = stringWriter.toString();
+
+			// Create TextArea for stacktrace
+			TextArea textArea = new TextArea(stackTrace);
+			textArea.setEditable(false);
+			textArea.setWrapText(true);
+
+			// Add TextArea to ScrollPane
+			ScrollPane scrollPane = new ScrollPane(textArea);
+			scrollPane.setFitToWidth(true);
+
+			// Create and configure Alert
+			Alert alert = new Alert(Alert.AlertType.ERROR);
+			alert.setTitle("Error");
+			String headerText = "An exception of type " + e.getClass().getName() + " was thrown";
+			alert.setHeaderText(headerText);
+			alert.getDialogPane().setContent(scrollPane);
+
+			// Show alert
+			alert.showAndWait();
+		}
 	}
 
 	public static void main(String[] args) {

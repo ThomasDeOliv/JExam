@@ -56,21 +56,7 @@ public interface IEntity {
 	 * @param description The provided entity description.
 	 */
 	void setDescription(String description);
-
-	// STATE *******************************************************************
-
-	/**
-	 * Get the entity state.
-	 *
-	 * @return The entity state.
-	 */
-	boolean getIsActive();
-
-	/**
-	 * Change the current entity state.
-	 */
-	void setIsActive(boolean isActive);
-
+	
 	// OPENING DATE AND TIME ***************************************************
 
 	/**

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<GridPane xmlns="http://javafx.com/javafx/21"
+          xmlns:fx="http://javafx.com/fxml/1"
+          fx:controller="com.thomasdeoliv.itemsmanager.ui.viewsmodels.ProjectsListViewModel">
+    <padding>
+        <Insets bottom="10" left="10" right="10" top="10"/>
+    </padding>
+
+    <columnConstraints>
+        <ColumnConstraints percentWidth="100"/>
+    </columnConstraints>
+
+    <rowConstraints>
+        <RowConstraints percentHeight="7.0"/>
+        <RowConstraints percentHeight="85.0"/>
+        <RowConstraints percentHeight="8.0"/>
+    </rowConstraints>
+
+    <HBox prefHeight="34.0"
+          prefWidth="248.0"
+          GridPane.columnIndex="0"
+          GridPane.rowIndex="0">
+
+        <Text fontSmoothingType="LCD"
+              lineSpacing="20.0"
+              strokeType="OUTSIDE"
+              strokeWidth="0.0"
+              text="Mes projets">
+            <font>
+                <Font name="System Bold"
+                      size="16.0"/>
+            </font>
+        </Text>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="newProjectButton"
+                text="Nouveau projet"
+                maxWidth="Infinity"
+                HBox.hgrow="ALWAYS"
+                style="
+                    -fx-border-radius: 10;
+                    -fx-background-radius: 10;
+                    -fx-background-color: #68EE8D;
+                    -fx-text-fill: black;">
+            <font>
+                <Font name="System Bold"
+                      size="12.0"/>
+            </font>
+        </Button>
+
+    </HBox>
+
+    <ListView fx:id="projectsListView"
+              onMouseClicked="#selectListViewElement"
+              centerShape="false"
+              GridPane.columnIndex="0"
+              GridPane.rowIndex="1"/>
+
+    <HBox GridPane.columnIndex="0"
+          GridPane.rowIndex="2"
+          spacing="2">
+
+        <padding>
+            <Insets top="10"/>
+        </padding>
+
+        <Button fx:id="updateProjectButton"
+                text="Modifier"
+                maxWidth="Infinity"
+                HBox.hgrow="ALWAYS"
+                disable="true"
+                style="
+                    -fx-border-radius: 10;
+                    -fx-background-radius: 10;
+                    -fx-background-color: #D58322;
+                    -fx-text-fill: black;">
+            <font>
+                <Font name="System Bold"
+                      size="12.0"/>
+            </font>
+        </Button>
+
+        <Button fx:id="closeProjectButton"
+                text="Clôturer"
+                maxWidth="Infinity"
+                HBox.hgrow="ALWAYS"
+                disable="true"
+                style="
+                    -fx-border-radius: 10;
+                    -fx-background-radius: 10;
+                    -fx-background-color: #C8CB31;
+                    -fx-text-fill: black;">
+            <font>
+                <Font name="System Bold"
+                      size="12.0"/>
+            </font>
+        </Button>
+
+        <Button fx:id="deleteProjectButton"
+                text="Supprimer"
+                maxWidth="Infinity"
+                HBox.hgrow="ALWAYS"
+                disable="true"
+                style="
+                    -fx-border-radius: 10;
+                    -fx-background-radius: 10;
+                    -fx-background-color: #CB3A31;
+                    -fx-text-fill: black;">
+            <font>
+                <Font name="System Bold"
+                      size="12.0"/>
+            </font>
+        </Button>
+    </HBox>
+
+</GridPane>

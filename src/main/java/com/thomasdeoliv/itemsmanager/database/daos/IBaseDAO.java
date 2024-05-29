@@ -1,6 +1,6 @@
 package com.thomasdeoliv.itemsmanager.database.daos;
 
-import com.thomasdeoliv.itemsmanager.database.daos.models.ResponseDTO;
+import com.thomasdeoliv.itemsmanager.database.daos.exceptions.QueryFailedException;
 import com.thomasdeoliv.itemsmanager.database.entities.IEntity;
 
 /**
@@ -9,25 +9,25 @@ import com.thomasdeoliv.itemsmanager.database.entities.IEntity;
  * @param <T> Class implementing the {@link IEntity} interface.
  */
 public interface IBaseDAO<T extends IEntity> {
-	
+
 	/**
 	 * Saves a new entity to the database.
 	 *
 	 * @param entity the entity to save.
 	 */
-	ResponseDTO saveEntity(T entity);
+	void saveEntity(T entity) throws QueryFailedException;
 
 	/**
 	 * Updates an existing entity in the database.
 	 *
 	 * @param entity the entity to update.
 	 */
-	ResponseDTO updateEntity(T entity);
+	void updateEntity(T entity) throws QueryFailedException;
 
 	/**
 	 * Deletes an entity from the database by its ID.
 	 *
 	 * @param id the ID of the entity to delete.
 	 */
-	ResponseDTO deleteEntity(Long id);
+	void deleteEntity(Long id) throws QueryFailedException;
 }

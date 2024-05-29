@@ -11,25 +11,27 @@ public class Configuration {
 	/**
 	 * The current section related to the database.
 	 */
-	private final Section databaseSection;
+	private Section databaseSection;
 
 	/**
 	 * Constructor
-	 *
-	 * @throws IOException if the file is missing.
 	 */
-	public Configuration() throws IOException {
-		// Load file
-		File configFile = new File("src/main/resources/config.ini");
-		// Ensure file exists
-		if (configFile.exists()) {
-			// Configuration
-			Ini ini = new Ini(configFile);
-			// Retrieve section
-			this.databaseSection = ini.get("database");
-		} else {
-			// Throw exception if the file is missing.
-			throw new IOException("Missing configuration file...");
+	public Configuration() {
+		try {
+			// Load file
+			File configFile = new File("src/main/resources/config.ini");
+			// Ensure file exists
+			if (configFile.exists()) {
+				// Configuration
+				Ini ini = new Ini(configFile);
+				// Retrieve section
+				this.databaseSection = ini.get("database");
+			} else {
+				// Throw exception if the file is missing.
+				throw new IOException("Missing configuration file...");
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 

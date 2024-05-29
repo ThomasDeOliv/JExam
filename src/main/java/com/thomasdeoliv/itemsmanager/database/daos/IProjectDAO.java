@@ -1,6 +1,6 @@
 package com.thomasdeoliv.itemsmanager.database.daos;
 
-import com.thomasdeoliv.itemsmanager.database.daos.models.ExtendedResponseDTO;
+import com.thomasdeoliv.itemsmanager.database.daos.exceptions.QueryFailedException;
 import com.thomasdeoliv.itemsmanager.database.entities.implementations.Project;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,7 +12,7 @@ public interface IProjectDAO extends IBaseDAO<Project> {
 	 *
 	 * @return a list of all projects.
 	 */
-	ExtendedResponseDTO<List<Project>> getAllProjects();
+	List<Project> getAllProjects() throws QueryFailedException;
 
 	/**
 	 * Retrieves a project by its ID.
@@ -20,5 +20,6 @@ public interface IProjectDAO extends IBaseDAO<Project> {
 	 * @param id the ID of the project to retrieve.
 	 * @return the project with the specified ID, or {@code null} if no such entity exists.
 	 */
-	ExtendedResponseDTO<@Nullable Project> getProjectById(Long id);
+	@Nullable
+	Project getProjectById(Long id) throws QueryFailedException;
 }
