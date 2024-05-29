@@ -1,18 +1,3 @@
--- Create database if not exists
-DO
-$$
-    BEGIN
-        IF NOT EXISTS (SELECT FROM pg_catalog.pg_database WHERE pg_database.datname = 'items_manager_db') THEN
-            PERFORM dblink_exec(
-                    'dbname=postgres user=postgres password=V44b2500!!',
-                    'CREATE DATABASE items_manager_db'
-                    );
-        END IF;
-    END
-$$;
-
--- CANNOT CONTINUE THE REST OF THE QUERY DUE TO POSTGRESQL TECHNICAL CONSTRAINTS
-
 -- Create schema
 CREATE SCHEMA IF NOT EXISTS tasks_manager_schema;
 

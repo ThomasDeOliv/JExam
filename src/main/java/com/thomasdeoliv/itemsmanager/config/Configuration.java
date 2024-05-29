@@ -1,61 +1,88 @@
 package com.thomasdeoliv.itemsmanager.config;
 
+import com.thomasdeoliv.itemsmanager.config.exceptions.InvalidConfigurationFormatException;
+import com.thomasdeoliv.itemsmanager.config.exceptions.MissingConfigurationException;
 import org.ini4j.Ini;
 import org.ini4j.Profile.Section;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 public class Configuration {
-	/**
-	 * The current section related to the database.
-	 */
-	private Section databaseSection;
+    /**
+     * The current section related to the database.
+     */
+    private final Section databaseSection;
 
-	/**
-	 * Constructor
-	 */
-	public Configuration() {
-		try {
-			// Load file
-			File configFile = new File("src/main/resources/config.ini");
-			// Ensure file exists
-			if (configFile.exists()) {
-				// Configuration
-				Ini ini = new Ini(configFile);
-				// Retrieve section
-				this.databaseSection = ini.get("database");
-			} else {
-				// Throw exception if the file is missing.
-				throw new IOException("Missing configuration file...");
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+    /**
+     * The current section related to the sockets.
+     */
+    private final Section socketsSection;
 
-	public String getDatabaseMainUrl() {
-		return this.databaseSection.get("main_url");
-	}
+    /**
+     * Constructor
+     */
+    public Configuration() throws MissingConfigurationException, InvalidConfigurationFormatException {
+        // Get config file path
+        String configPath = Objects.requireNonNull(this.getClass().getResource("/config.ini")).getPath();
+        // Assert path is not null
+        if (configPath == null) {
+            throw new MissingConfigurationException();
+        }
+        // Load file
+        File configFile = new File(configPath);
+        // Ensure file exists
+        if (!configFile.exists()) {
+            throw new MissingConfigurationException();
+        }
+        // Configuration
+        Ini ini;
+        try {
+            ini = new Ini(configFile);
+        } catch (IOException e) {
+            throw new InvalidConfigurationFormatException(e);
+        }
+        // Retrieve database section
+        this.databaseSection = ini.get("database");
+        // Retrieve sockets section
+        this.socketsSection = ini.get("socket");
+    }
 
-	public String getDatabaseUrl() {
-		return this.databaseSection.get("url");
-	}
+    public String getDatabaseUrl() throws InvalidConfigurationFormatException {
+        if (this.databaseSection.get("url") == null) {
+            throw new InvalidConfigurationFormatException();
+        }
+        return this.databaseSection.get("url");
+    }
 
-	public String getDatabaseUsername() {
-		return this.databaseSection.get("username");
-	}
+    public String getDatabaseUsername() throws InvalidConfigurationFormatException {
+        if (this.databaseSection.get("username") == null) {
+            throw new InvalidConfigurationFormatException();
+        }
+        return this.databaseSection.get("username");
+    }
 
-	public String getDatabaseUserPassword() {
-		return this.databaseSection.get("password");
-	}
+    public String getDatabaseUserPassword() throws InvalidConfigurationFormatException {
+        if (this.databaseSection.get("password") == null) {
+            throw new InvalidConfigurationFormatException();
+        }
+        return this.databaseSection.get("password");
+    }
 
-	public String getDatabaseName() {
-		return this.databaseSection.get("database_name");
-	}
+    public String getServerHost() throws InvalidConfigurationFormatException {
+        if (this.socketsSection.get("host") == null) {
+            throw new InvalidConfigurationFormatException();
+        }
+        return this.socketsSection.get("host");
+    }
 
-	public String getSchemaName() {
-		return this.databaseSection.get("schema_name");
-	}
+    public int getServerPort() throws InvalidConfigurationFormatException {
+        if (this.socketsSection.get("port") == null) {
+            throw new InvalidConfigurationFormatException();
+        }
+        String portString = this.socketsSection.get("port");
+        return Integer.parseInt(portString);
+    }
 }

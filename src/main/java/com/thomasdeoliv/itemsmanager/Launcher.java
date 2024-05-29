@@ -5,101 +5,100 @@ import com.thomasdeoliv.itemsmanager.database.daos.implementations.ProjectDAO;
 import com.thomasdeoliv.itemsmanager.database.daos.implementations.TaskDAO;
 import com.thomasdeoliv.itemsmanager.database.entities.implementations.Project;
 import com.thomasdeoliv.itemsmanager.database.entities.implementations.Task;
+import com.thomasdeoliv.itemsmanager.helpers.ErrorDialog;
+import com.thomasdeoliv.itemsmanager.helpers.FXHelpers;
 import javafx.application.Application;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.fxml.FXMLLoader;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
-import org.jetbrains.annotations.Nullable;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.net.URL;
 
 /**
  * The class which contains the Main function.
  */
 public class Launcher extends Application {
 
-	private static Stage primaryStage;
+    private static final ObjectProperty<Project> selectedProject = new SimpleObjectProperty<>(null);
+    private static final ObjectProperty<Task> selectedTask = new SimpleObjectProperty<>(null);
+    private static final SimpleBooleanProperty displayTasks = new SimpleBooleanProperty(false);
 
-	public static final Configuration configuration = new Configuration();
-	public static final ProjectDAO projectDAO = new ProjectDAO(Launcher.configuration);
-	public static final TaskDAO taskDAO = new TaskDAO(Launcher.configuration);
+    private static final Configuration configuration;
+    private static final ProjectDAO projectDAO;
+    private static final TaskDAO taskDAO;
 
-	public static Project SelectedProject = null;
-	public static Task SelectedTask = null;
-	public static SimpleBooleanProperty DisplayTasks = new SimpleBooleanProperty(false);
+    // Static bloc to turn projectDAO and taskDAO ad final
+    static {
+        Configuration tempConfiguration = null;
+        ProjectDAO tempProjectDAO = null;
+        TaskDAO tempTaskDAO = null;
+        try {
+            tempConfiguration = new Configuration();
+            tempProjectDAO = new ProjectDAO(tempConfiguration);
+            tempTaskDAO = new TaskDAO(tempConfiguration);
+        } catch (IOException e) {
+            ErrorDialog.handleException(e);
+        }
+        configuration = tempConfiguration;
+        projectDAO = tempProjectDAO;
+        taskDAO = tempTaskDAO;
+    }
 
-	@Override
-	public void start(@Nullable Stage primaryStage) {
+    public static void main(String[] args) {
+        launch(args);
+    }
 
-		try {
-			// Ensure the stage exists
-			if (primaryStage == null) {
-				throw new RuntimeException();
-			}
-			// Define the main stage
-			Launcher.primaryStage = primaryStage;
-			// Define title
-			primaryStage.setTitle("Items manager");
-			// Search for layout fxml view
-			URL layoutURL = this.getClass().getResource("/views/layouts/layout.fxml");
-			// Ensure layout exists
-			if (layoutURL == null) {
-				throw new FileNotFoundException("Cannot find layout file.");
-			}
-			// Load layout
-			Parent mainView = FXMLLoader.load(layoutURL);
-			// Define scene
-			primaryStage.setScene(new Scene(mainView));
-			// Show the main stage
-			primaryStage.show();
-		} catch (IOException e) {
+    public static Configuration getConfiguration() {
+        return configuration;
+    }
 
-			StringWriter stringWriter = new StringWriter();
-			PrintWriter printWriter = new PrintWriter(stringWriter);
+    public static ProjectDAO getProjectDAO() {
+        return projectDAO;
+    }
 
-			// Print all causes of the exception
-			Throwable current = e;
-			while (current != null) {
-				current.printStackTrace(printWriter);
-				current = current.getCause();
-				if (current != null) {
-					printWriter.println("Caused by:");
-				}
-			}
+    public static TaskDAO getTaskDAO() {
+        return taskDAO;
+    }
 
-			String stackTrace = stringWriter.toString();
+    public static ObjectProperty<Project> selectedProjectProperty() {
+        return selectedProject;
+    }
 
-			// Create TextArea for stacktrace
-			TextArea textArea = new TextArea(stackTrace);
-			textArea.setEditable(false);
-			textArea.setWrapText(true);
+    public static ObjectProperty<Task> selectedTaskProperty() {
+        return selectedTask;
+    }
 
-			// Add TextArea to ScrollPane
-			ScrollPane scrollPane = new ScrollPane(textArea);
-			scrollPane.setFitToWidth(true);
+    public static SimpleBooleanProperty displayTasksProperty() {
+        return displayTasks;
+    }
 
-			// Create and configure Alert
-			Alert alert = new Alert(Alert.AlertType.ERROR);
-			alert.setTitle("Error");
-			String headerText = "An exception of type " + e.getClass().getName() + " was thrown";
-			alert.setHeaderText(headerText);
-			alert.getDialogPane().setContent(scrollPane);
+    @Override
+    public void start(Stage primaryStage) {
+        try {
+            // Displayed Projects
+            if (primaryStage == null) {
+                // Ensure provided stage is not null
+                throw new RuntimeException("Primary stage is null.");
+            }
+            primaryStage.setTitle("Items Manager");
+            FXHelpers.setApplicationIcon(primaryStage, "/images/icon.png");
+            Parent mainView = FXHelpers.loadFXML("/views/layouts/MainLayout.fxml");
+            primaryStage.setScene(new Scene(mainView));
+            primaryStage.show();
 
-			// Show alert
-			alert.showAndWait();
-		}
-	}
-
-	public static void main(String[] args) {
-		launch(args);
-	}
+            // Chat
+            Stage chatStage = new Stage();
+            chatStage.setTitle("Chat");
+            FXHelpers.setApplicationIcon(chatStage, "/images/icon.png");
+            Parent chatView = FXHelpers.loadFXML("/views/layouts/ChatLayout.fxml");
+            chatStage.setScene(new Scene(chatView));
+            chatStage.show();
+        } catch (IOException e) {
+            // Handle error case
+            ErrorDialog.handleException(e);
+        }
+    }
 }

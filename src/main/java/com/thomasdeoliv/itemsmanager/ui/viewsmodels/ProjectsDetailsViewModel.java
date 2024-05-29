@@ -6,16 +6,14 @@ import javafx.scene.control.Label;
 
 public class ProjectsDetailsViewModel {
 
-	private int count = 0;
+    @FXML
+    private Button myButton;
 
-	@FXML
-	private Button myButton;
+    @FXML
+    private Label myLabel;
 
-	@FXML
-	private Label myLabel;
+    @FXML
+    private void initialize() {
 
-	@FXML
-	private void initialize() {
-		
-	}
+    }
 }
