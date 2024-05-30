@@ -3,7 +3,9 @@ package com.thomasdeoliv.itemsmanager.ui.viewsmodels;
 import com.thomasdeoliv.itemsmanager.Launcher;
 import com.thomasdeoliv.itemsmanager.database.entities.comparators.ProjectComparator;
 import com.thomasdeoliv.itemsmanager.database.entities.implementations.Project;
+import com.thomasdeoliv.itemsmanager.helpers.ErrorDialog;
 import com.thomasdeoliv.itemsmanager.ui.cells.ProjectListCell;
+import com.thomasdeoliv.itemsmanager.ui.load.ProjectsLoader;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -12,8 +14,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
-
-import java.util.List;
 
 /**
  * This class represents the ViewModel for the projects list.
@@ -29,10 +29,22 @@ public class ProjectsListViewModel {
 	 * Constructor initializes the ViewModel by fetching all projects from the database.
 	 */
 	public ProjectsListViewModel() {
+		// Instantiate comparator
 		this.projectComparator = new ProjectComparator();
+		// Instantiate projects loader
+		ProjectsLoader projectsLoader = new ProjectsLoader(Launcher.getProjectDAO());
 		// Query all projects
-		List<Project> projectsList = Launcher.getProjectDAO().getAllProjects();
-		this.projects = FXCollections.observableArrayList(projectsList);
+		projectsLoader.start();
+		// Try to get result of thread call
+		try {
+			// Join thread
+			projectsLoader.join();
+		} catch (InterruptedException e) {
+			// Display error
+			ErrorDialog.handleException(e);
+		}
+		// Set ObservableList
+		this.projects = FXCollections.observableArrayList(projectsLoader.getProjects());
 	}
 
 	/**
