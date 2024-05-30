@@ -12,11 +12,9 @@ import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 import java.io.IOException;
 
@@ -33,7 +31,7 @@ public class Launcher extends Application {
 	private static final ProjectDAO projectDAO;
 	private static final TaskDAO taskDAO;
 
-	// Static bloc to turn projectDAO and taskDAO ad final
+	// Static bloc to turn projectDAO and taskDAO as final
 	static {
 		Configuration tempConfiguration = null;
 		ProjectDAO tempProjectDAO = null;
@@ -90,14 +88,12 @@ public class Launcher extends Application {
 			FXHelpers.setApplicationIcon(primaryStage, "/images/icon.png"); // Icon
 			Parent mainView = FXHelpers.loadFXML("/views/layouts/MainLayout.fxml"); // FXML rendering
 			primaryStage.setScene(new Scene(mainView)); // Scene
-			primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() { // OnClose Window event
-				@Override
-				public void handle(WindowEvent t) {
-					// Kill app
-					Platform.exit();
-					// Set normal status
-					System.exit(0);
-				}
+			// OnClose Window event
+			primaryStage.setOnCloseRequest(windowEvent -> {
+				// Kill app
+				Platform.exit();
+				// Set normal status
+				System.exit(0);
 			});
 			primaryStage.show();
 
@@ -108,14 +104,12 @@ public class Launcher extends Application {
 			FXHelpers.setApplicationIcon(chatStage, "/images/icon.png"); // Icon
 			Parent chatView = FXHelpers.loadFXML("/views/layouts/ChatLayout.fxml"); // FXML rendering
 			chatStage.setScene(new Scene(chatView)); // Scene
-			chatStage.setOnCloseRequest(new EventHandler<WindowEvent>() { // OnClose Window event
-				@Override
-				public void handle(WindowEvent t) {
-					// Kill app
-					Platform.exit();
-					// Set normal status
-					System.exit(0);
-				}
+			// OnClose Window event
+			chatStage.setOnCloseRequest(t -> {
+				// Kill app
+				Platform.exit();
+				// Set normal status
+				System.exit(0);
 			});
 			chatStage.show();
 		} catch (IOException e) {
