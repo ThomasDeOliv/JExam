@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<GridPane xmlns="http://javafx.com/javafx/21"
+          xmlns:fx="http://javafx.com/fxml/1"
+          fx:controller="com.thomasdeoliv.itemsmanager.ui.viewsmodels.TasksListViewModel">
+    <padding>
+        <Insets bottom="10"
+                left="10"
+                right="10"
+                top="10"/>
+    </padding>
+
+    <columnConstraints>
+        <ColumnConstraints percentWidth="100"/>
+    </columnConstraints>
+
+    <rowConstraints>
+        <RowConstraints percentHeight="5.0"/>
+        <RowConstraints percentHeight="5.0"/>
+        <RowConstraints percentHeight="84.0"/>
+        <RowConstraints percentHeight="6.0"/>
+    </rowConstraints>
+
+    <HBox prefHeight="37.0"
+          prefWidth="248.0"
+          GridPane.columnIndex="0"
+          GridPane.rowIndex="0">
+
+        <Text fontSmoothingType="LCD"
+              lineSpacing="20.0"
+              strokeType="OUTSIDE"
+              strokeWidth="0.0"
+              text="Tâches">
+            <font>
+                <Font name="System Bold"
+                      size="16.0"/>
+            </font>
+        </Text>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="newTaskButton"
+                maxWidth="Infinity"
+                style="-fx-border-radius: 10;
+                    -fx-background-radius: 10;
+                    -fx-background-color: #68EE8D;
+                    -fx-text-fill: black;"
+                text="Nouvelle tâche"
+                HBox.hgrow="ALWAYS">
+            <font>
+                <Font name="System Bold" size="12.0"/>
+            </font>
+        </Button>
+
+    </HBox>
+
+    <Text fx:id="sortLink"
+          onMouseEntered="#handleMouseEnter"
+          onMouseExited="#handleMouseExit"
+          onMouseClicked="#sortCollection"
+          fill="#651bbf"
+          fontSmoothingType="LCD"
+          text="Trier du plus ancien au plus récent"
+          textAlignment="CENTER"
+          underline="true"
+          GridPane.columnIndex="0"
+          GridPane.rowIndex="1"/>
+
+    <ListView fx:id="tasksListView"
+              centerShape="false"
+              onMouseClicked="#selectListViewElement"
+              GridPane.columnIndex="0"
+              GridPane.rowIndex="2"/>
+
+    <HBox spacing="2"
+          GridPane.columnIndex="0"
+          GridPane.rowIndex="3">
+
+        <padding>
+            <Insets top="10"/>
+        </padding>
+
+        <Button fx:id="updateTaskButton"
+                disable="true"
+                maxWidth="Infinity"
+                style="-fx-border-radius: 10;
+                    -fx-background-radius: 10;
+                    -fx-background-color: #D58322;
+                    -fx-text-fill: black;"
+                text="Modifier" HBox.hgrow="ALWAYS">
+            <font>
+                <Font name="System Bold"
+                      size="12.0"/>
+            </font>
+        </Button>
+
+        <Button fx:id="closeTaskButton"
+                disable="true"
+                maxWidth="Infinity"
+                style="-fx-border-radius: 10;
+                    -fx-background-radius: 10;
+                    -fx-background-color: #C8CB31;
+                    -fx-text-fill: black;"
+                text="Clôturer"
+                HBox.hgrow="ALWAYS">
+            <font>
+                <Font name="System Bold" size="12.0"/>
+            </font>
+        </Button>
+
+        <Button fx:id="deleteTaskButton"
+                disable="true"
+                maxWidth="Infinity"
+                style="-fx-border-radius: 10;
+                    -fx-background-radius: 10;
+                    -fx-background-color: #CB3A31;
+                    -fx-text-fill: black;"
+                text="Supprimer"
+                HBox.hgrow="ALWAYS">
+            <font>
+                <Font name="System Bold"
+                      size="12.0"/>
+            </font>
+        </Button>
+    </HBox>
+
+</GridPane>
