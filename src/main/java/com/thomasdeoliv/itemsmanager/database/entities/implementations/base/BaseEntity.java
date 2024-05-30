@@ -7,100 +7,143 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 /**
- * Represent an entity.
+ * Represents a base entity with common attributes and methods for all entities.
  */
 public abstract class BaseEntity implements IEntity, Serializable {
+
 	/**
 	 * The ID of the entity.
 	 */
 	private Long id;
+
 	/**
 	 * The name of the entity.
 	 */
 	private String name;
+
 	/**
 	 * The description of the entity.
 	 */
-	private @Nullable String description;
-	/**
-	 * Indicate if the entity is currently active.
-	 */
-	private boolean isActive;
+	@Nullable
+	private String description;
+
 	/**
 	 * The creation date and time of the entity.
 	 */
 	private Timestamp startedAt;
+
 	/**
 	 * The nullable closing date and time of the entity.
 	 */
-	private @Nullable Timestamp endedAt;
+	@Nullable
+	private Timestamp endedAt;
+
 	/**
 	 * If exists, the related ID of the current item.
 	 */
-	private @Nullable Long relatedItemId;
+	@Nullable
+	private Long relatedItemId;
 
 	/**
-	 * Entity constructor.
+	 * Protected Entity constructor.
 	 */
 	protected BaseEntity() {
 
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Long getId() {
 		return this.id;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setId(Long id) {
 		this.id = id;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String getName() {
 		return this.name;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setName(String name) {
 		this.name = name;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public @Nullable String getDescription() {
+	@Nullable
+	public String getDescription() {
 		return this.description;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setDescription(@Nullable String description) {
 		this.description = description;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Timestamp getStartedAt() {
 		return this.startedAt;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setStartedAt(Timestamp startedAt) {
 		this.startedAt = startedAt;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public @Nullable Timestamp getEndedAt() {
 		return this.endedAt;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setEndedAt(@Nullable Timestamp endedAt) {
 		this.endedAt = endedAt;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public @Nullable Long getRelatedItemId() {
+	@Nullable
+	public Long getRelatedItemId() {
 		return this.relatedItemId;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setRelatedItemId(@Nullable Long relatedItemId) {
 		this.relatedItemId = relatedItemId;

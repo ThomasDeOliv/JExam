@@ -6,6 +6,7 @@ import com.thomasdeoliv.itemsmanager.database.entities.implementations.base.Base
  * A representation of a project row in the database.
  */
 public class Task extends BaseEntity {
+	
 	/**
 	 * Constructor.
 	 */

@@ -1,53 +1,97 @@
 package com.thomasdeoliv.itemsmanager.ui.viewsmodels;
 
 import com.thomasdeoliv.itemsmanager.Launcher;
-import com.thomasdeoliv.itemsmanager.database.daos.exceptions.QueryFailedException;
 import com.thomasdeoliv.itemsmanager.database.entities.comparators.ProjectComparator;
 import com.thomasdeoliv.itemsmanager.database.entities.implementations.Project;
+import com.thomasdeoliv.itemsmanager.helpers.ErrorDialog;
 import com.thomasdeoliv.itemsmanager.ui.cells.ProjectListCell;
+import com.thomasdeoliv.itemsmanager.ui.load.ProjectsLoader;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 
-import java.util.List;
-
+/**
+ * This class represents the ViewModel for the projects list.
+ */
 public class ProjectsListViewModel {
 
-	private final ProjectComparator projectComparator = new ProjectComparator();
+	/**
+	 * Comparator for sorting projects by starting dates.
+	 */
+	private final ProjectComparator projectComparator;
 
-	@FXML
-	public Button newProjectButton;
-	@FXML
-	public Button updateProjectButton;
-	@FXML
-	public Button closeProjectButton;
-	@FXML
-	public Button deleteProjectButton;
+	/**
+	 * Constructor initializes the ViewModel by fetching all projects from the database.
+	 */
+	public ProjectsListViewModel() {
+		// Instantiate comparator
+		this.projectComparator = new ProjectComparator();
+		// Instantiate projects loader
+		ProjectsLoader projectsLoader = new ProjectsLoader(Launcher.getProjectDAO());
+		// Query all projects
+		projectsLoader.start();
+		// Try to get result of thread call
+		try {
+			// Join thread
+			projectsLoader.join();
+		} catch (InterruptedException e) {
+			// Display error
+			ErrorDialog.handleException(e);
+		}
+		// Set ObservableList
+		this.projects = FXCollections.observableArrayList(projectsLoader.getProjects());
+	}
+
+	/**
+	 * List of projects to be displayed.
+	 */
 	@FXML
 	private ObservableList<Project> projects;
+
+	/**
+	 * ListView to display the projects.
+	 */
 	@FXML
 	private ListView<Project> projectsListView;
+
+	/**
+	 * Text element acting as a link to trigger sorting.
+	 */
 	@FXML
 	private Text sortLink;
 
-	public ProjectsListViewModel() {
-		// Fetch collections
-		try {
-			// Query all projects
-			List<Project> projectsList = Launcher.getProjectDAO().getAllProjects();
-			this.projects = FXCollections.observableArrayList(projectsList);
-		} catch (QueryFailedException e) {
-			// Use an empty list if the request failed
-			this.projects = FXCollections.observableArrayList();
-		}
-	}
+	/**
+	 * Button to create a new project.
+	 */
+	@FXML
+	public Button newProjectButton;
 
+	/**
+	 * Button to update the selected project.
+	 */
+	@FXML
+	public Button updateProjectButton;
+
+	/**
+	 * Button to close the selected project.
+	 */
+	@FXML
+	public Button closeProjectButton;
+
+	/**
+	 * Button to delete the selected project.
+	 */
+	@FXML
+	public Button deleteProjectButton;
+
+	/**
+	 * Initializes the ViewModel.
+	 */
 	@FXML
 	public void initialize() {
 		// Fill all ListView items with project Observable list
@@ -61,45 +105,71 @@ public class ProjectsListViewModel {
 		this.projectsListView.setCellFactory(listView -> new ProjectListCell());
 	}
 
+	/**
+	 * Handles mouse entering the sort link, changing the cursor to a hand.
+	 *
+	 * @param event the mouse event.
+	 */
 	@FXML
 	private void handleMouseEnter(MouseEvent event) {
 		this.sortLink.setCursor(Cursor.HAND);
 	}
 
+	/**
+	 * Handles mouse exiting the sort link, reverting the cursor to default.
+	 *
+	 * @param event the mouse event.
+	 */
 	@FXML
 	private void handleMouseExit(MouseEvent event) {
 		this.sortLink.setCursor(Cursor.DEFAULT);
 	}
 
+	/**
+	 * Handles selecting a project from the ListView.
+	 *
+	 * @param event the mouse event.
+	 */
 	@FXML
 	private void selectListViewElement(MouseEvent event) {
-		// Get selected project
+		// Get the selected project
 		Project selectedProject = this.projectsListView.getSelectionModel().getSelectedItem();
 		// Ensure the selection is not null
 		if (selectedProject != null) {
-			// Set selectedProject in launcher
+			// Set the selected project in the launcher
 			Launcher.selectedProjectProperty().set(selectedProject);
-			// Display the selected project in an alert
-			Alert alert = new Alert(Alert.AlertType.INFORMATION);
-			alert.setTitle("Project Selected");
-			alert.setHeaderText(null);
-			alert.setContentText("Selected Project: " + selectedProject.getName());
-			alert.showAndWait();
 		}
 	}
 
+	/**
+	 * Handles sorting the project list when the sort link is clicked.
+	 *
+	 * @param actionEvent the mouse event.
+	 */
 	@FXML
 	public void sortCollection(MouseEvent actionEvent) {
 		// Update text
 		if (this.sortLink.getText().equals("Trier du plus ancien au plus récent")) {
+			// Sort collection with provided comparator
 			this.projects.sort(this.projectComparator);
+			// Remove all items in listview
 			this.projectsListView.setItems(null);
+			// Put again sorted list
 			this.projectsListView.setItems(this.projects);
+			// Select first item
+			this.projectsListView.getSelectionModel().selectFirst();
+			// Change text
 			this.sortLink.setText("Trier du plus récent au plus ancien");
 		} else {
+			// Sort collection with provided comparator
 			this.projects.sort(this.projectComparator.reversed());
+			// Remove all items in listview
 			this.projectsListView.setItems(null);
+			// Put again sorted list
 			this.projectsListView.setItems(this.projects);
+			// Select first item
+			this.projectsListView.getSelectionModel().selectFirst();
+			// Change text
 			this.sortLink.setText("Trier du plus ancien au plus récent");
 		}
 	}

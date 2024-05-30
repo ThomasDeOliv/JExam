@@ -9,11 +9,12 @@ import java.util.List;
  * A representation of a project row in the database.
  */
 public class Project extends BaseEntity {
+
 	/**
 	 * The list of related tasks.
 	 */
 	private final List<Task> tasks;
-	
+
 	/**
 	 * The number of related tasks.
 	 */
