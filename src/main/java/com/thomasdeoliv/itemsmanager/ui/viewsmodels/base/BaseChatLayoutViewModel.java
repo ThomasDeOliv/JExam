@@ -1,7 +1,6 @@
 package com.thomasdeoliv.itemsmanager.ui.viewsmodels.base;
 
 import com.thomasdeoliv.itemsmanager.Launcher;
-import com.thomasdeoliv.itemsmanager.helpers.ErrorDialog;
 import com.thomasdeoliv.itemsmanager.sockets.BackgroundSocket;
 import com.thomasdeoliv.itemsmanager.sockets.Handler;
 import javafx.collections.FXCollections;
@@ -13,43 +12,85 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 
-import java.io.IOException;
-
+/**
+ * Represents the ViewModel for a basic chat layout.
+ */
 public class BaseChatLayoutViewModel implements Handler {
 
-    @FXML
-    public Text port;
-    @FXML
-    public TextField recipient;
-    @FXML
-    public ListView<String> list;
-    @FXML
-    public TextArea message;
-    @FXML
-    public Button send;
-    private ObservableList<String> messages;
-    private int serverPort;
-    private BackgroundSocket socketBackgroundTask;
+	/**
+	 * ObservableList to hold chat messages.
+	 */
+	private final ObservableList<String> messages;
 
-    public BaseChatLayoutViewModel() {
-        try {
-            serverPort = Launcher.getConfiguration().getServerPort();
-            socketBackgroundTask = new BackgroundSocket(Launcher.getConfiguration(), this);
-            messages = FXCollections.observableArrayList();
-        } catch (IOException e) {
-            ErrorDialog.handleException(e);
-        }
-    }
+	/**
+	 * Server port number.
+	 */
+	private final int serverPort;
 
-    @FXML
-    public void initialize() {
-        this.port.setText("Votre port : " + serverPort);
-        this.socketBackgroundTask.start();
-        this.list.getItems().addAll(messages);
-    }
+	/**
+	 * Background socket task for server communication.
+	 */
+	private final BackgroundSocket socketBackgroundTask;
 
-    @Override
-    public void handleMessage(String message) {
-        messages.add(message);
-    }
+	/**
+	 * Constructor initializes the ViewModel, and starts the background socket task.
+	 */
+	public BaseChatLayoutViewModel() {
+		serverPort = Launcher.getConfiguration().getServerPort();
+		socketBackgroundTask = new BackgroundSocket(Launcher.getConfiguration(), this);
+		messages = FXCollections.observableArrayList();
+	}
+
+	/**
+	 * Text node to display the server port.
+	 */
+	@FXML
+	public Text port;
+
+	/**
+	 * TextField for entering the recipient of the message.
+	 */
+	@FXML
+	public TextField recipient;
+
+	/**
+	 * ListView to display the chat messages.
+	 */
+	@FXML
+	public ListView<String> list;
+
+	/**
+	 * TextArea for composing messages to be sent.
+	 */
+	@FXML
+	public TextArea message;
+
+	/**
+	 * Button to send messages.
+	 */
+	@FXML
+	public Button send;
+
+	/**
+	 * Initializes the ViewModel.
+	 */
+	@FXML
+	public void initialize() {
+		// Set port field
+		this.port.setText("Votre port : " + serverPort);
+		// Start socket server background task
+		this.socketBackgroundTask.start();
+		// Add all messages in the listview
+		this.list.getItems().addAll(messages);
+	}
+
+	/**
+	 * Handles incoming messages by adding them to the messages list.
+	 *
+	 * @param message the message received from the server.
+	 */
+	@Override
+	public void handleMessage(String message) {
+		messages.add(message);
+	}
 }

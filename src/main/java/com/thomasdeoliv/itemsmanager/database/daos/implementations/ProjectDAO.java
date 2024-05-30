@@ -2,38 +2,31 @@ package com.thomasdeoliv.itemsmanager.database.daos.implementations;
 
 import com.thomasdeoliv.itemsmanager.config.Configuration;
 import com.thomasdeoliv.itemsmanager.database.daos.IProjectDAO;
-import com.thomasdeoliv.itemsmanager.database.daos.exceptions.QueryFailedException;
-import com.thomasdeoliv.itemsmanager.database.daos.exceptions.QueryType;
 import com.thomasdeoliv.itemsmanager.database.entities.implementations.Project;
 import com.thomasdeoliv.itemsmanager.helpers.ErrorDialog;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ProjectDAO implements IProjectDAO {
 
-	private String url;
-	private String userName;
-	private String userPassword;
+	private final String url;
+	private final String userName;
+	private final String userPassword;
 
 	/**
 	 * Task DAO constructor.
 	 */
 	public ProjectDAO(Configuration configuration) {
-		try {
-			this.url = configuration.getDatabaseUrl();
-			this.userName = configuration.getDatabaseUsername();
-			this.userPassword = configuration.getDatabaseUserPassword();
-		} catch (IOException e) {
-			ErrorDialog.handleException(e);
-		}
+		this.url = configuration.getDatabaseUrl();
+		this.userName = configuration.getDatabaseUsername();
+		this.userPassword = configuration.getDatabaseUserPassword();
 	}
 
 	@Override
-	public List<Project> getAllProjects() throws QueryFailedException {
+	public List<Project> getAllProjects() {
 		// Instantiate a list of projects.
 		List<Project> projects = new ArrayList<>();
 		// Open a connection to the database.
@@ -70,13 +63,15 @@ public class ProjectDAO implements IProjectDAO {
 				return projects;
 			}
 		} catch (SQLException ex) {
-			// Return statement
-			throw new QueryFailedException(QueryType.SELECT, Project.class.getSimpleName(), ex);
+			// Show dialog
+			ErrorDialog.handleException(ex);
 		}
+		// Return statement
+		return projects;
 	}
 
 	@Override
-	public @Nullable Project getProjectById(Long id) throws QueryFailedException {
+	public @Nullable Project getProjectById(Long id) {
 		// Open a connection to the database.
 		try (Connection connection = DriverManager.getConnection(this.url, this.userName, this.userPassword)) {
 			// Query
@@ -120,13 +115,15 @@ public class ProjectDAO implements IProjectDAO {
 				return project;
 			}
 		} catch (SQLException ex) {
-			// Return statement
-			throw new QueryFailedException(QueryType.SELECT, Project.class.getSimpleName(), ex);
+			// Show dialog
+			ErrorDialog.handleException(ex);
 		}
+		// Return statement
+		return null;
 	}
 
 	@Override
-	public void saveEntity(Project entity) throws QueryFailedException {
+	public void saveEntity(Project entity) {
 		// Validate datas
 		if (entity.getEndedAt() != null || entity.getRelatedItemId() != null) {
 			throw new IllegalArgumentException("Invalid datas provided.");
@@ -151,13 +148,13 @@ public class ProjectDAO implements IProjectDAO {
 				}
 			}
 		} catch (SQLException ex) {
-			// Return statement
-			throw new QueryFailedException(QueryType.INSERT, Project.class.getSimpleName(), ex);
+			// Show dialog
+			ErrorDialog.handleException(ex);
 		}
 	}
 
 	@Override
-	public void updateEntity(Project entity) throws QueryFailedException {
+	public void updateEntity(Project entity) {
 		// Validate datas
 		if (entity.getRelatedItemId() != null) {
 			throw new IllegalArgumentException("Invalid datas provided.");
@@ -195,13 +192,13 @@ public class ProjectDAO implements IProjectDAO {
 				}
 			}
 		} catch (SQLException ex) {
-			// Return statement
-			throw new QueryFailedException(QueryType.UPDATE, Project.class.getSimpleName(), ex);
+			// Show dialog
+			ErrorDialog.handleException(ex);
 		}
 	}
 
 	@Override
-	public void deleteEntity(Long id) throws QueryFailedException {
+	public void deleteEntity(Long id) {
 		// Open a connection to the database.
 		try (Connection connection = DriverManager.getConnection(this.url, this.userName, this.userPassword)) {
 			// Query
@@ -223,8 +220,8 @@ public class ProjectDAO implements IProjectDAO {
 				}
 			}
 		} catch (SQLException ex) {
-			// Return statement
-			throw new QueryFailedException(QueryType.DELETE, Project.class.getSimpleName(), ex);
+			// Show dialog
+			ErrorDialog.handleException(ex);
 		}
 	}
 }

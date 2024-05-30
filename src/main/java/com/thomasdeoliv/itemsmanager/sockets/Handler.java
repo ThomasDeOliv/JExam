@@ -1,5 +1,14 @@
 package com.thomasdeoliv.itemsmanager.sockets;
 
+/**
+ * Contract for handling messages.
+ */
 public interface Handler {
-    void handleMessage(String message);
+
+	/**
+	 * Handles the specified message.
+	 *
+	 * @param message the message to be handled.
+	 */
+	void handleMessage(String message);
 }

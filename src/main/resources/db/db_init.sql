@@ -1,8 +1,8 @@
 -- Create schema
-CREATE SCHEMA IF NOT EXISTS tasks_manager_schema;
+CREATE SCHEMA IF NOT EXISTS items_manager_schema;
 
 -- Set search path to user created schema
-SET search_path TO tasks_manager_schema;
+SET search_path TO items_manager_schema;
 
 -- Create table
 CREATE TABLE IF NOT EXISTS item
@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS item
 );
 
 -- Insert datas for testing
-INSERT INTO item(item_name, item_description)
-VALUES ('Création de site internet', 'Mise en place d''un site WordPress.'),
-       ('Test de fonctionnalités', 'Réalisation de tests unitaires.'),
-       ('Achat licence SQL Server', NULL);
+INSERT INTO item(item_name, item_description, item_start_at)
+VALUES ('Création de site internet', 'Mise en place d''un site WordPress.', '2022-10-10 11:30:30-00'),
+       ('Test de fonctionnalités', 'Réalisation de tests unitaires.', '2023-10-10 11:30:30-00'),
+       ('Achat licence SQL Server', NULL, '2024-10-10 11:30:30-00');
