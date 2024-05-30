@@ -48,6 +48,7 @@ It allows for quick management of projects by associating specific tasks with th
 ## Installation
 
 1. **Clone the repository**:
+
     ```sh
    git clone https://github.com/ThomasDeOliv/JExam
     ```
@@ -58,7 +59,8 @@ It allows for quick management of projects by associating specific tasks with th
 
 
 3. **Build the project with Maven**:
-    ```sh
+
+   ```sh
     mvn clean install
     ```
 
@@ -69,6 +71,7 @@ It allows for quick management of projects by associating specific tasks with th
 
 
 5. **Optionally, if you need to reinstall the maven dependencies**:
+
     ```sh
     mvn clean install -U
     ```
