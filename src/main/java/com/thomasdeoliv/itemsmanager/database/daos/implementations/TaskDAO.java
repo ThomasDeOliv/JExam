@@ -10,6 +10,9 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implementation of data access methods for Tasks entities.
+ */
 public class TaskDAO implements ITaskDAO {
 
 	private final String url;
@@ -25,6 +28,9 @@ public class TaskDAO implements ITaskDAO {
 		this.userPassword = configuration.getDatabaseUserPassword();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<Task> getAllTasks(Long projectId) {
 		// Instantiate a list
@@ -71,6 +77,9 @@ public class TaskDAO implements ITaskDAO {
 		return tasks;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@Nullable
 	public Task getTaskById(Long id) {
@@ -116,6 +125,9 @@ public class TaskDAO implements ITaskDAO {
 		return task;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void saveEntity(Task entity) {
 		// Validate datas
@@ -148,6 +160,9 @@ public class TaskDAO implements ITaskDAO {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void updateEntity(Task entity) {
 		// Validate datas
@@ -194,6 +209,9 @@ public class TaskDAO implements ITaskDAO {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void deleteEntity(Long id) {
 		// Open a connection to the database.

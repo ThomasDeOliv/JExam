@@ -10,6 +10,9 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implementation of data access methods for Projects entities.
+ */
 public class ProjectDAO implements IProjectDAO {
 
 	private final String url;
@@ -25,6 +28,9 @@ public class ProjectDAO implements IProjectDAO {
 		this.userPassword = configuration.getDatabaseUserPassword();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<Project> getAllProjects() {
 		// Instantiate a list of projects.
@@ -68,6 +74,9 @@ public class ProjectDAO implements IProjectDAO {
 		return projects;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@Nullable
 	public Project getProjectById(Long id) {
@@ -121,6 +130,9 @@ public class ProjectDAO implements IProjectDAO {
 		return null;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void saveEntity(Project entity) {
 		// Validate datas
@@ -152,6 +164,9 @@ public class ProjectDAO implements IProjectDAO {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void updateEntity(Project entity) {
 		// Validate datas
@@ -196,6 +211,9 @@ public class ProjectDAO implements IProjectDAO {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void deleteEntity(Long id) {
 		// Open a connection to the database.
