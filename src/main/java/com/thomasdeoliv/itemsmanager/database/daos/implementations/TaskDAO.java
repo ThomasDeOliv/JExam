@@ -72,7 +72,10 @@ public class TaskDAO implements ITaskDAO {
 	}
 
 	@Override
-	public @Nullable Task getTaskById(Long id) {
+	@Nullable
+	public Task getTaskById(Long id) {
+		// Declare Task
+		Task task = null;
 		// Open a connection to the database.
 		try (Connection connection = DriverManager.getConnection(this.url, this.userName, this.userPassword)) {
 			// Query
@@ -89,8 +92,6 @@ public class TaskDAO implements ITaskDAO {
 				statement.setLong(1, id);
 				// Execute query
 				ResultSet rs = statement.executeQuery();
-				// Declare Task
-				Task task = null;
 				// Loop on each provided results
 				while (rs.next()) {
 					// Instantiate a task object
@@ -106,15 +107,13 @@ public class TaskDAO implements ITaskDAO {
 					task.setEndedAt(endAt);
 					task.setRelatedItemId(rs.getLong("item_related_item_id"));
 				}
-				// Return
-				return task;
 			}
 		} catch (SQLException ex) {
 			// Show dialog
 			ErrorDialog.handleException(ex);
 		}
 		// Return statement
-		return null;
+		return task;
 	}
 
 	@Override

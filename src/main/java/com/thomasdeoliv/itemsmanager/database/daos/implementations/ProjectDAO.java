@@ -59,8 +59,6 @@ public class ProjectDAO implements IProjectDAO {
 					// Add project to list
 					projects.add(project);
 				}
-				// Return statement
-				return projects;
 			}
 		} catch (SQLException ex) {
 			// Show dialog
@@ -71,7 +69,8 @@ public class ProjectDAO implements IProjectDAO {
 	}
 
 	@Override
-	public @Nullable Project getProjectById(Long id) {
+	@Nullable
+	public Project getProjectById(Long id) {
 		// Open a connection to the database.
 		try (Connection connection = DriverManager.getConnection(this.url, this.userName, this.userPassword)) {
 			// Query
