@@ -38,6 +38,7 @@ It allows for quick management of projects by associating specific tasks with th
 - **PostgreSQL**: Latest version
 - **Maven**: Version 3.9.6
 - **IntelliJ IDEA**: Latest version
+- **PgAdmin4**: Latest version
 - **Configuration File**: Create a `config.ini` file for configuration settings from
   the `config.example.ini` [file](./src/main/resources/config.example.ini) present in the `resources` folder.
 - **Database Script**: After creating the `config.ini` file and setting all requested parameters, create a database with
