@@ -9,7 +9,7 @@ It allows for quick management of projects by associating specific tasks with th
 
 ### Project Management
 
-- **List projects**: Display a list of all projects.
+- **List projects**: Display a list of all projects. You can sort this list by starting date.
 - **Read a detailed description of a project**: View the detailed information of a selected project.
 - **Describe the project**: Provide a detailed description.
 - **Create a project**: Create a new project.
@@ -19,7 +19,7 @@ It allows for quick management of projects by associating specific tasks with th
 
 ### Task Management
 
-- **List tasks**: Display a list of all tasks related to a project.
+- **List tasks**: Display a list of all tasks related to a project. You can sort this list by starting date.
 - **Read a detailed description of a task**: View the detailed information of a selected task.
 - **Describe the task**: Provide a detailed description.
 - **Create a task**: Create a new task.
