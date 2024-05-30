@@ -104,6 +104,7 @@ public class Launcher extends Application {
 			// Chat
 			Stage chatStage = new Stage(); // Define another stage
 			chatStage.setTitle("Chat"); // Title
+			chatStage.setResizable(false); // Not resizable
 			FXHelpers.setApplicationIcon(chatStage, "/images/icon.png"); // Icon
 			Parent chatView = FXHelpers.loadFXML("/views/layouts/ChatLayout.fxml"); // FXML rendering
 			chatStage.setScene(new Scene(chatView)); // Scene
